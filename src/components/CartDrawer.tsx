@@ -1,31 +1,27 @@
-import type { CartItem } from '../types';
+import { useCartState } from '../context/CartContext';
 import CartItemsList from './CartItemsList';
 
-interface CartDrawerProps {
-  items: CartItem[];
-  onRemove: (productId: string) => void;
-  onCheckout: () => void;
-}
+export default function CartDrawer() {
+  const items = useCartState();
 
-export default function CartDrawer({
-  items,
-  onRemove,
-  onCheckout,
-}: CartDrawerProps) {
   const total = items.reduce(
     (sum, item) => sum + item.product.price * item.quantity,
     0
   );
 
+  function handleCheckout() {
+    alert('Checkout will be implemented in a later deliverable.');
+  }
+
   return (
     <aside className="cart-drawer">
       <h2>Your Cart</h2>
 
-      <CartItemsList items={items} onRemove={onRemove} />
+      <CartItemsList />
 
       <h3>Total: ${total}</h3>
 
-      <button onClick={onCheckout} disabled={items.length === 0}>
+      <button onClick={handleCheckout} disabled={items.length === 0}>
         Checkout
       </button>
     </aside>

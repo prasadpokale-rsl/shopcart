@@ -1,14 +1,9 @@
-import type { CartItem } from '../types';
+import { useCartDispatch, useCartState } from '../context/CartContext';
 
-interface CartItemsListProps {
-  items: CartItem[];
-  onRemove: (productId: string) => void;
-}
+export default function CartItemsList() {
+  const items = useCartState();
+  const dispatch = useCartDispatch();
 
-export default function CartItemsList({
-  items,
-  onRemove,
-}: CartItemsListProps) {
   if (items.length === 0) {
     return <p>Your cart is empty.</p>;
   }
@@ -25,7 +20,14 @@ export default function CartItemsList({
             </p>
           </div>
 
-          <button onClick={() => onRemove(item.product.id)}>
+          <button
+            onClick={() =>
+              dispatch({
+                type: 'REMOVE_ITEM',
+                productId: item.product.id,
+              })
+            }
+          >
             Remove
           </button>
         </div>

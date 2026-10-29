@@ -1,21 +1,22 @@
 import type { Product } from '../types';
+import { useCartDispatch } from '../context/CartContext';
 
 interface ProductCardProps {
   product: Product;
-  onAddToCart: (product: Product) => void;
 }
 
-export default function ProductCard({
-  product,
-  onAddToCart,
-}: ProductCardProps) {
+export default function ProductCard({ product }: ProductCardProps) {
+  const dispatch = useCartDispatch();
+
+  function handleAddToCart() {
+    dispatch({ type: 'ADD_ITEM', product });
+  }
+
   return (
     <div className="product-card">
       <h3>{product.name}</h3>
       <p>${product.price}</p>
-      <button onClick={() => onAddToCart(product)}>
-        Add to Cart
-      </button>
+      <button onClick={handleAddToCart}>Add to Cart</button>
     </div>
   );
 }
