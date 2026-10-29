@@ -2,11 +2,7 @@ import { useEffect, useState } from 'react';
 import type { Product } from '../types';
 import ProductCard from './ProductCard';
 
-interface CatalogProps {
-  onAddToCart: (product: Product) => void;
-}
-
-export default function Catalog({ onAddToCart }: CatalogProps) {
+export default function Catalog() {
   const [products, setProducts] = useState<Product[]>([]);
   const [error, setError] = useState('');
 
@@ -39,11 +35,7 @@ export default function Catalog({ onAddToCart }: CatalogProps) {
 
       <div className="product-grid">
         {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onAddToCart={onAddToCart}
-          />
+          <ProductCard key={product.id} product={product} />
         ))}
       </div>
     </section>
