@@ -21,5 +21,28 @@
       "price": 75
     }
   ],
-  "orders": []
+  "orders": [
+    {
+      "items": [
+        {
+          "product": {
+            "id": "p1",
+            "name": "Mechanical Keyboard",
+            "price": 120
+          },
+          "quantity": 2
+        },
+        {
+          "product": {
+            "id": "p2",
+            "name": "Wireless Ergonomic Mouse",
+            "price": 55
+          },
+          "quantity": 2
+        }
+      ],
+      "total": 350,
+      "id": 1
+    }
+  ]
 }
