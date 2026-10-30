@@ -1,33 +1,69 @@
-import type { CartItem } from '../types';
+import { useAtomValue, useSetAtom } from 'jotai';
+import {
+  cartItemsAtom,
+  cartTotalAtom,
+  checkoutStatusAtom,
+  clearCartAtom,
+} from '../atoms/cartAtoms';
 import CartItemsList from './CartItemsList';
 
-interface CartDrawerProps {
-  items: CartItem[];
-  onRemove: (productId: string) => void;
-  onCheckout: () => void;
-}
+export default function CartDrawer() {
+  const items = useAtomValue(cartItemsAtom);
+  const total = useAtomValue(cartTotalAtom);
+  const status = useAtomValue(checkoutStatusAtom);
 
-export default function CartDrawer({
-  items,
-  onRemove,
-  onCheckout,
-}: CartDrawerProps) {
-  const total = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
-  );
+  const clearCart = useSetAtom(clearCartAtom);
+  const setCheckoutStatus = useSetAtom(checkoutStatusAtom);
+
+  const checkout = async () => {
+    if (items.length === 0 || status === 'submitting') {
+      return;
+    }
+
+    setCheckoutStatus('submitting');
+
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ items, total }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Checkout failed');
+      }
+
+      clearCart();
+      setCheckoutStatus('success');
+    } catch {
+      setCheckoutStatus('error');
+    }
+  };
 
   return (
-    <aside className="cart-drawer">
+    <section className="cart-drawer">
       <h2>Your Cart</h2>
 
-      <CartItemsList items={items} onRemove={onRemove} />
+      <CartItemsList />
 
-      <h3>Total: ${total}</h3>
+      <h3>Total: ${total.toFixed(2)}</h3>
 
-      <button onClick={onCheckout} disabled={items.length === 0}>
-        Checkout
+      <button
+        onClick={checkout}
+        disabled={items.length === 0 || status === 'submitting'}
+      >
+        {status === 'submitting' ? 'Placing Order...' : 'Checkout'}
       </button>
-    </aside>
+
+      {status === 'success' && (
+        <p>Order placed successfully!</p>
+      )}
+
+      {status === 'error' && (
+        <p>Checkout failed. Please try again.</p>
+      )}
+    </section>
   );
 }
