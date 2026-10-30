@@ -21,5 +21,86 @@
       "price": 75
     }
   ],
-  "orders": []
+  "orders": [
+    {
+      "items": [
+        {
+          "product": {
+            "id": "p1",
+            "name": "Mechanical Keyboard",
+            "price": 120
+          },
+          "quantity": 4
+        },
+        {
+          "product": {
+            "id": "p2",
+            "name": "Wireless Ergonomic Mouse",
+            "price": 55
+          },
+          "quantity": 4
+        }
+      ],
+      "total": 700,
+      "id": 1
+    },
+    {
+      "items": [
+        {
+          "product": {
+            "id": "p2",
+            "name": "Wireless Ergonomic Mouse",
+            "price": 55
+          },
+          "quantity": 1
+        },
+        {
+          "product": {
+            "id": "p1",
+            "name": "Mechanical Keyboard",
+            "price": 120
+          },
+          "quantity": 1
+        }
+      ],
+      "total": 175,
+      "id": 2
+    },
+    {
+      "items": [
+        {
+          "product": {
+            "id": "p2",
+            "name": "Wireless Ergonomic Mouse",
+            "price": 55
+          },
+          "quantity": 4
+        },
+        {
+          "product": {
+            "id": "p1",
+            "name": "Mechanical Keyboard",
+            "price": 120
+          },
+          "quantity": 5
+        }
+      ],
+      "total": 820,
+      "id": 3
+    },
+    {
+      "items": [
+        {
+          "product": {
+            "id": "p4",
+            "name": "Ultra-Wide Monitor Light Bar",
+            "price": 75
+          },
+          "quantity": 3
+        }
+      ],
+      "total": 225,
+      "id": 4
+    }
+  ]
 }
