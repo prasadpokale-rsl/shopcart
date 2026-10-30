@@ -1,13 +1,11 @@
 import CartBadge from './CartBadge';
 
-interface ToolbarProps {
-  count: number;
-}
-
-export default function Toolbar({ count }: ToolbarProps) {
+export default function Toolbar() {
   return (
     <div className="toolbar">
-      <CartBadge count={count} />
+      <h2>ShopCart</h2>
+      <CartBadge />
     </div>
   );
 }
+

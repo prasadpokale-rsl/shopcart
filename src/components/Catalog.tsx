@@ -2,12 +2,9 @@ import { useEffect, useState } from 'react';
 import type { Product } from '../types';
 import ProductCard from './ProductCard';
 
-interface CatalogProps {
-  onAddToCart: (product: Product) => void;
-}
-
-export default function Catalog({ onAddToCart }: CatalogProps) {
+export default function Catalog() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -16,18 +13,24 @@ export default function Catalog({ onAddToCart }: CatalogProps) {
         const response = await fetch('/api/products');
 
         if (!response.ok) {
-          throw new Error('Failed to load products');
+          throw new Error('Failed to fetch products');
         }
 
         const data: Product[] = await response.json();
         setProducts(data);
       } catch {
         setError('Unable to load products. Please try again.');
+      } finally {
+        setLoading(false);
       }
     }
 
     fetchProducts();
   }, []);
+
+  if (loading) {
+    return <p>Loading products...</p>;
+  }
 
   if (error) {
     return <p>{error}</p>;
@@ -39,11 +42,7 @@ export default function Catalog({ onAddToCart }: CatalogProps) {
 
       <div className="product-grid">
         {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onAddToCart={onAddToCart}
-          />
+          <ProductCard key={product.id} product={product} />
         ))}
       </div>
     </section>
