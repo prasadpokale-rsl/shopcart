@@ -1,33 +1,67 @@
-import type { CartItem } from '../types';
+import { useEffect } from 'react';
+import { useMachine } from '@xstate/react';
+import { useCartStore, selectCartTotal } from '../store/cartStore';
+import { checkoutMachine } from '../machines/checkoutMachine';
 import CartItemsList from './CartItemsList';
 
-interface CartDrawerProps {
-  items: CartItem[];
-  onRemove: (productId: string) => void;
-  onCheckout: () => void;
-}
+export default function CartDrawer() {
+  const items = useCartStore((state) => state.items);
+  const total = useCartStore(selectCartTotal);
+  const clearCart = useCartStore((state) => state.clearCart);
 
-export default function CartDrawer({
-  items,
-  onRemove,
-  onCheckout,
-}: CartDrawerProps) {
-  const total = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
-  );
+  const [snapshot, send] = useMachine(checkoutMachine, {
+    input: { items: [] },
+  });
+
+  useEffect(() => {
+    if (snapshot.matches('success')) {
+      clearCart();
+    }
+  }, [snapshot, clearCart]);
+
+  const isSubmitting = snapshot.matches('submitting');
+  const isSuccess = snapshot.matches('success');
+  const isError = snapshot.matches('error');
 
   return (
-    <aside className="cart-drawer">
+    <section className="cart-drawer">
       <h2>Your Cart</h2>
 
-      <CartItemsList items={items} onRemove={onRemove} />
+      <CartItemsList />
 
-      <h3>Total: ${total}</h3>
+      <h3>Total: ${total.toFixed(2)}</h3>
 
-      <button onClick={onCheckout} disabled={items.length === 0}>
-        Checkout
+      <button
+        type="button"
+        onClick={() => send({ type: 'CHECKOUT', items })}
+        disabled={
+          items.length === 0 ||
+          isSubmitting ||
+          isSuccess
+        }
+      >
+        {isSubmitting ? 'Placing Order...' : 'Checkout'}
       </button>
-    </aside>
+
+      {isSubmitting && <p>Placing your order...</p>}
+
+      {isSuccess && <p>Order placed successfully!</p>}
+
+      {isError && (
+        <div>
+          <p>
+            {snapshot.context.error ??
+              'Checkout failed. Please try again.'}
+          </p>
+
+          <button
+            type="button"
+            onClick={() => send({ type: 'RETRY' })}
+          >
+            Try Again
+          </button>
+        </div>
+      )}
+    </section>
   );
 }

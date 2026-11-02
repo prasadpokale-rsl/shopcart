@@ -1,33 +1,36 @@
-import type { CartItem } from '../types';
+import { useCartStore } from '../store/cartStore';
 
-interface CartItemsListProps {
-  items: CartItem[];
-  onRemove: (productId: string) => void;
-}
+export default function CartItemsList() {
+  const items = useCartStore((state) => state.items);
+  const removeItem = useCartStore((state) => state.removeItem);
 
-export default function CartItemsList({
-  items,
-  onRemove,
-}: CartItemsListProps) {
   if (items.length === 0) {
-    return <p>Your cart is empty.</p>;
+    return <p className="empty-cart">Your cart is empty.</p>;
   }
 
   return (
-    <div>
+    <div className="cart-items-list">
       {items.map((item) => (
-        <div className="cart-item" key={item.product.id}>
-          <div>
+        <div className="cart-item-row" key={item.product.id}>
+          <div className="cart-item-details">
             <h4>{item.product.name}</h4>
-            <p>
-              ${item.product.price} × {item.quantity} = $
-              {item.product.price * item.quantity}
-            </p>
+            <p>Price: ${item.product.price.toFixed(2)} each</p>
+            <p>Quantity: {item.quantity}</p>
           </div>
 
-          <button onClick={() => onRemove(item.product.id)}>
-            Remove
-          </button>
+          <div className="cart-item-actions">
+            <strong>
+              ${(item.product.price * item.quantity).toFixed(2)}
+            </strong>
+
+            <button
+              type="button"
+              onClick={() => removeItem(item.product.id)}
+              className="remove-item-button"
+            >
+              Remove
+            </button>
+          </div>
         </div>
       ))}
     </div>
