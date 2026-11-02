@@ -101,6 +101,28 @@
       ],
       "total": 225,
       "id": 4
+    },
+    {
+      "items": [
+        {
+          "product": {
+            "id": "p2",
+            "name": "Wireless Ergonomic Mouse",
+            "price": 55
+          },
+          "quantity": 2
+        },
+        {
+          "product": {
+            "id": "p1",
+            "name": "Mechanical Keyboard",
+            "price": 120
+          },
+          "quantity": 1
+        }
+      ],
+      "total": 230,
+      "id": 5
     }
   ]
 }

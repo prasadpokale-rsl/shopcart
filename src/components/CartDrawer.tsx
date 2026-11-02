@@ -1,11 +1,27 @@
+import { useEffect } from 'react';
+import { useMachine } from '@xstate/react';
 import { useCartStore, selectCartTotal } from '../store/cartStore';
+import { checkoutMachine } from '../machines/checkoutMachine';
 import CartItemsList from './CartItemsList';
 
 export default function CartDrawer() {
   const items = useCartStore((state) => state.items);
   const total = useCartStore(selectCartTotal);
-  const checkoutStatus = useCartStore((state) => state.checkoutStatus);
-  const checkout = useCartStore((state) => state.checkout);
+  const clearCart = useCartStore((state) => state.clearCart);
+
+  const [snapshot, send] = useMachine(checkoutMachine, {
+    input: { items: [] },
+  });
+
+  useEffect(() => {
+    if (snapshot.matches('success')) {
+      clearCart();
+    }
+  }, [snapshot, clearCart]);
+
+  const isSubmitting = snapshot.matches('submitting');
+  const isSuccess = snapshot.matches('success');
+  const isError = snapshot.matches('error');
 
   return (
     <section className="cart-drawer">
@@ -16,18 +32,35 @@ export default function CartDrawer() {
       <h3>Total: ${total.toFixed(2)}</h3>
 
       <button
-        onClick={checkout}
-        disabled={items.length === 0 || checkoutStatus === 'submitting'}
+        type="button"
+        onClick={() => send({ type: 'CHECKOUT', items })}
+        disabled={
+          items.length === 0 ||
+          isSubmitting ||
+          isSuccess
+        }
       >
-        {checkoutStatus === 'submitting' ? 'Placing Order...' : 'Checkout'}
+        {isSubmitting ? 'Placing Order...' : 'Checkout'}
       </button>
 
-      {checkoutStatus === 'success' && (
-        <p>Order placed successfully!</p>
-      )}
+      {isSubmitting && <p>Placing your order...</p>}
 
-      {checkoutStatus === 'error' && (
-        <p>Checkout failed. Please try again.</p>
+      {isSuccess && <p>Order placed successfully!</p>}
+
+      {isError && (
+        <div>
+          <p>
+            {snapshot.context.error ??
+              'Checkout failed. Please try again.'}
+          </p>
+
+          <button
+            type="button"
+            onClick={() => send({ type: 'RETRY' })}
+          >
+            Try Again
+          </button>
+        </div>
       )}
     </section>
   );
